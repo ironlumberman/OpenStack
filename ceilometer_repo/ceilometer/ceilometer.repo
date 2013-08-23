@@ -1,0 +1,4 @@
+[openstack-epel-fuel-grizzly]
+name=Ceilometer Custom Packages
+baseurl=http://fuel-pm.domain.tld/ceilometer
+gpgcheck=0
