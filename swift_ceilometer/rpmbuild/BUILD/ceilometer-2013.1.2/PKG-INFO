@@ -1,0 +1,22 @@
+Metadata-Version: 1.1
+Name: ceilometer
+Version: 2013.1.2
+Summary: cloud computing metering
+Home-page: https://launchpad.net/ceilometer
+Author: OpenStack
+Author-email: ceilometer@lists.launchpad.net
+License: UNKNOWN
+Download-URL: http://tarballs.openstack.org/ceilometer/ceilometer-2013.1.2.tar.gz
+Description: UNKNOWN
+Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Framework :: Setuptools Plugin
+Classifier: Environment :: OpenStack
+Classifier: Intended Audience :: Information Technology
+Classifier: Intended Audience :: System Administrators
+Classifier: License :: OSI Approved :: Apache Software License
+Classifier: Operating System :: POSIX :: Linux
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 2
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Topic :: System :: Monitoring
