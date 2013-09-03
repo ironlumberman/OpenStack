@@ -6,6 +6,7 @@
 ##          1. yum install python-pip                  ##
 ##          2. pythom-pip install pecan                ##
 ##                                                     ##
+##        RabbitMQ required erlang R14B                ##
 ##                                                     ##
 #########################################################
 #########################################################
@@ -25,22 +26,22 @@ exec {'add_group':
 ########## Define global variables ###########   
 ##############################################
 
-$deployment_id = '48'
+$deployment_id = '50'
 $ntp_servers = ['pool.ntp.org']
-$swift_vip = '192.168.122.77'
-$internal_virtual_ip = '192.168.122.88'
-$ceilometer_vip = '192.168.122.88'
-$public_interface = 'eth0'
-$mongo_slave_ip = '192.168.122.46'
-$mongo_arbiter_ip = '192.168.122.47'
+$swift_vip = '192.168.100.78'
+$internal_virtual_ip = '192.168.100.89'
+$ceilometer_vip = '192.168.100.89'
+$public_interface = 'eth2'
+$mongo_slave_ip = '192.168.100.101'
+$mongo_arbiter_ip = '192.168.100.120'
 
 $nodes_harr = [
   {
     'name' => 'swiftproxy-01',
     'role' => 'primary-swift-proxy',
     'role2' => 'haproxy',
-    'internal_address' => '192.168.122.47',
-    'public_address'   => '192.168.122.47',
+    'internal_address' => '192.168.100.120',
+    'public_address'   => '192.168.100.120',
     'haproxy_proxy'  =>  true,
     'ha_serv' => 'swift-proxy',
     'mongo_arbiter' => true,
@@ -51,8 +52,8 @@ $nodes_harr = [
   {
     'name' => 'swiftproxy-02',
     'role' => 'swift-proxy',
-    'internal_address' => '192.168.122.48',
-    'public_address'   => '192.168.122.48',
+    'internal_address' => '192.168.100.121',
+    'public_address'   => '192.168.100.121',
     'ha_serv' => 'swift-proxy',
     'p_keep' => 'slave',
     'nagios_node' => true,
@@ -60,26 +61,26 @@ $nodes_harr = [
   {
     'name' => 'swiftproxy-03',
     'role' => 'swift-proxy',
-    'internal_address' => '192.168.122.49',
-    'public_address'   => '192.168.122.49',
+    'internal_address' => '192.168.100.122',
+    'public_address'   => '192.168.100.122',
     'ha_serv' => 'swift-proxy',
     'p_keep' => 'slave2',
     'nagios_node' => true,
-  },
+ },
 
  {
     'name' => 'ceilometer-01',
     'role' => 'ceilometer',
     'role2' => 'haproxy',
     'ha_serv' => 'ceilometer',
-    'internal_address' => '192.168.122.45',
-    'public_address'   => '192.168.122.45',
-    'internal_interface' => 'eth0',
+    'internal_address' => '192.168.100.100',
+    'public_address'   => '192.168.100.100',
+    'internal_interface' => 'eth1',
     'primary_controller' => true,
     'haproxy_ceilometer' => true,
     'master_ceilometer' => true,
     'mongo_master' => true,
-    'public_interface' => 'eth0',
+    'public_interface' => 'eth2',
     'r_keep' => 'master',
     'nagios_node' => true,
   },
@@ -89,8 +90,8 @@ $nodes_harr = [
     'role' => 'ceilometer',
     'role2' => 'haproxy',
     'ha_serv' => 'ceilometer',
-    'internal_address' => '192.168.122.46',
-    'public_address'   => '192.168.122.46',
+    'internal_address' => '192.168.100.101',
+    'public_address'   => '192.168.100.101',
     'slave_controller' => true,
     'haproxy_ceilometer' => true,
     'r_keep' => 'slave',
@@ -101,32 +102,33 @@ $nodes_harr = [
   {
     'name' => 'swift-01',
     'role' => 'storage',
-    'internal_address' => '192.168.122.50',
-    'public_address'   => '192.168.122.50',
+    'internal_address' => '192.168.100.110',
+    'public_address'   => '192.168.100.110',
     'swift_zone'       => 1,
     'mountpoints'=> "1 2\n 2 1",
-    'storage_local_net_ip' => '192.168.122.50',
+    'storage_local_net_ip' => '192.168.100.110',
   },
   {
     'name' => 'swift-02',
     'role' => 'storage',
-    'internal_address' => '192.168.122.30',
-    'public_address'   => '192.168.122.30',
+    'internal_address' => '192.168.100.111',
+    'public_address'   => '192.168.100.111',
     'swift_zone'       => 2,
     'mountpoints'=> "1 2\n 2 1",
-    'storage_local_net_ip' => '192.168.122.30',
-    'nagios_node' => true,
-  },
-  {
-    'name' => 'swift-03',
-    'role' => 'storage',
-    'internal_address' => '192.168.122.31',
-    'public_address'   => '192.168.122.31',
-    'swift_zone'       => 3,
-    'mountpoints'=> "1 2\n 2 1",
-    'storage_local_net_ip' => '192.168.122.31',
+    'storage_local_net_ip' => '192.168.100.111',
     'nagios_node' => true,
   }
+#  ,
+#  {
+#    'name' => 'swift-03',
+#    'role' => 'storage',
+#    'internal_address' => '192.168.122.31',
+#    'public_address'   => '192.168.122.31',
+#    'swift_zone'       => 3,
+#    'mountpoints'=> "1 2\n 2 1",
+#    'storage_local_net_ip' => '192.168.122.31',
+#    'nagios_node' => true,
+#  }
 ]
 
 
@@ -158,7 +160,7 @@ $swift_proxy_nodes = merge_arrays(filter_nodes($nodes,'role','primary-swift-prox
 $swift_proxies = nodes_to_hash($swift_proxy_nodes,'name','internal_address')
 $swift_nodes_ga = keys($swift_proxies)
 
-$nv_physical_volume     = ['sdb','sdc']
+$nv_physical_volume     = ['vdb','vdc']
 $swift_loopback = false
 $swift_user_password     = 'swift'
 
@@ -384,7 +386,7 @@ case $r_keep {
 
   "master": {
    keepalived::instance { $internal_vrid:
-      interface => 'eth0',
+      interface => $public_interface,
       virtual_ips => [$internal_virtual_ip],
       state    =>   'MASTER',
       priority =>  101,
@@ -395,7 +397,7 @@ case $r_keep {
  "slave": {
 
     keepalived::instance { $internal_vrid:
-      interface => 'eth0',
+      interface => $public_interface,
       virtual_ips => [$internal_virtual_ip],
       state    =>   'SLAVE',
       priority =>  100,
@@ -426,7 +428,7 @@ class {'openstack::ceilometer':
   db_type => 'mongodb',
   db_host => $ceilometer_vip,
   db_name => 'ceilometer',
-  auth_host => '192.168.122.77',
+  auth_host => $swift_vip,
   auth_admin_prefix => false,
   auth_password => 'ceilometer',
   auth_port => '5000',
@@ -470,11 +472,11 @@ if $mongo_master {
         path    => ["/usr/bin","/bin"],
         require => Class["::mongodb"],
                                            }
-#  exec {"wait":
-#        command => "sleep 30",
-#        path    => ["/usr/bin","/bin"],
-#        require => Exec["initiate"],
-#                                         }
+  exec {"wait":
+        command => "sleep 30",
+        path    => ["/usr/bin","/bin"],
+        require => Exec["initiate"],
+                                         }
 
   exec {"initiate2":
         command => "mongo --port 27018 admin --eval \"printjson(rs.initiate({\\\"_id\\\": \\\"mongoCluster1\\\", \\\"members\\\":[{_id: 0,host:\\\"$mongo_arbiter_ip:27018, true\\\"}]}))\" >> /root/mongo",
@@ -482,11 +484,11 @@ if $mongo_master {
         require => Class["::mongodb"],
                                            }
 
-#  exec {"wait2":
-#        command => "sleep 30",
-#        path    => ["/usr/bin","/bin"],
-#        require => Exec["initiate"],
-#                                         }
+  exec {"wait2":
+        command => "sleep 30",
+        path    => ["/usr/bin","/bin"],
+        require => Exec["initiate"],
+                                         }
 }
   
 $rabbit_password         = 'nova'
@@ -501,7 +503,8 @@ class { 'rabbitmq':
   cluster_nodes          => ['ceilometer-01', 'ceilometer-02'],
   default_user           => $rabbit_user,
   default_pass           => $rabbit_password,
-  port                   => $rabbit_port
+  port                   => $rabbit_port,
+  wipe_db_on_cookie_change => true
 }
 
  if $master_ceilometer {   
@@ -571,13 +574,15 @@ file { 'cert.pem':
       storages => filter_nodes($nodes, 'role', 'storage')
     }
   }
+
+
   class { 'openstack::swift::proxy':
     swift_user_password     => $swift_user_password,
     swift_proxies           => $swift_proxies,
     primary_proxy           => $primary_proxy,
     controller_node_address => $internal_address,
     swift_local_net_ip      => $internal_address,
-    master_swift_proxy_ip   => $internal_address,
+    master_swift_proxy_ip   => $master_swift_proxy_ip,
   }
 
 package { 'socat': ensure => present }
@@ -630,7 +635,7 @@ case $p_keep {
 
   "master": {
    keepalived::instance { $internal_vrid:
-      interface => 'eth0',
+      interface => $public_interface,
       virtual_ips => [$swift_vip],
       state    =>   'MASTER',
       priority =>  101,
@@ -640,7 +645,7 @@ case $p_keep {
  "slave": {
 
     keepalived::instance { $internal_vrid:
-      interface => 'eth0',
+      interface => $public_interface,
       virtual_ips => [$swift_vip],
       state    =>   'SLAVE',
       priority =>  100,
@@ -650,7 +655,7 @@ case $p_keep {
  "slave2": {
 
     keepalived::instance { $internal_vrid:
-      interface => 'eth0',
+      interface => $public_interface,
       virtual_ips => [$swift_vip],
       state    =>   'SLAVE',
       priority =>  101,
@@ -691,5 +696,4 @@ node /swift-[\d+]/ {
 $nagios_master = $node[0]['nagios_master']
 $nagios_node = $node[0]['nagios_node']
 $mysql_pass = nova
-
 
